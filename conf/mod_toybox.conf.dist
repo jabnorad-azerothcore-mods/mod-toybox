@@ -1,0 +1,53 @@
+[worldserver]
+
+########################################
+# mod-toybox
+########################################
+#
+#    Toybox.Enable
+#        Description: Enable the toybox
+#        Default:     0 - Disabled
+#                     1 - Enabled
+#
+
+Toybox.Enable = 0
+
+#
+#    Toybox.ConfirmTradable
+#        Description: What using a toy that isn't soulbound does. Asking first protects
+#                     items with a trade value from a misclick. Soulbound toys never ask.
+#        Default:     1 - Warn first; using it again within 30 seconds confirms
+#                     0 - Consume it immediately
+#
+
+Toybox.ConfirmTradable = 1
+
+#
+#    Toybox.ExtraItems
+#        Description: Item IDs to add to the mod_toybox_item table's list, separated by
+#                     commas. Each needs an on-use spell, and can't be equippable or have
+#                     limited charges. These cast on the player: toys that need a selected
+#                     target or a ground target need a row in the table instead.
+#        Default:     "" - None
+#
+
+Toybox.ExtraItems = ""
+
+#
+#    Toybox.ExcludedItems
+#        Description: Item IDs to remove from the mod_toybox_item table's list, separated
+#                     by commas. They stay in collections, but can't be used or added.
+#        Default:     "" - None
+#
+
+Toybox.ExcludedItems = ""
+
+#
+#    Toybox.SharedAccounts.Enable
+#        Description: Allow GMs to share one toybox between accounts with the
+#                     .toybox link command.
+#        Default:     0 - Disabled
+#                     1 - Enabled
+#
+
+Toybox.SharedAccounts.Enable = 0

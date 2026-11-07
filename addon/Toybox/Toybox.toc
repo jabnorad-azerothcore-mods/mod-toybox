@@ -1,0 +1,9 @@
+## Interface: 30300
+## Title: Toybox
+## Notes: Account-wide toy collection for servers running mod-toybox
+## OptionalDeps: ElvUI
+## SavedVariablesPerCharacter: ToyboxCharDB
+Core.lua
+Grid.lua
+Bar.lua
+Skin.lua
