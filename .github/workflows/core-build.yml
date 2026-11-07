@@ -1,0 +1,21 @@
+# Builds the module against current AzerothCore master with AzerothCore's own module workflow,
+# then dry-runs worldserver and runs cppcheck. pull_request (not pull_request_target), so PRs
+# from forks run without secrets and with a read-only token
+name: core-build
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    uses: azerothcore/reusable-workflows/.github/workflows/core_build_modules.yml@main
+    with:
+      module_repo: ${{ github.event.repository.name }}

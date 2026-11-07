@@ -1,0 +1,5 @@
+<Bindings>
+  <Binding name="TOYBOX_TOGGLE" header="TOYBOX">
+    ToyboxGrid_Toggle()
+  </Binding>
+</Bindings>

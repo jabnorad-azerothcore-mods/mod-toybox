@@ -1,0 +1,26 @@
+name: codestyle
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cpp:
+    uses: azerothcore/reusable-workflows/.github/workflows/codestyle_modules.yml@main
+    with:
+      check_paths: src
+
+  lua:
+    name: luacheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq lua-check
+      - run: luacheck addon
