@@ -1,6 +1,8 @@
 # Builds the module against current AzerothCore master with AzerothCore's own module workflow,
 # then dry-runs worldserver and runs cppcheck. pull_request (not pull_request_target), so PRs
-# from forks run without secrets and with a read-only token
+# from forks run without secrets and with a read-only token.
+# Also runs weekly, so AzerothCore changes that break the module show up without a toybox change:
+# a failed scheduled run opens an issue (or comments on the open one), and the next green one closes it
 name: core-build
 on:
   push:
@@ -10,6 +12,9 @@ on:
     branches:
       - main
   workflow_dispatch:
+  schedule:
+    # Mondays 06:17 UTC; off the hour to avoid GitHub's top-of-hour schedule congestion
+    - cron: '17 6 * * 1'
 
 permissions:
   contents: read
@@ -19,3 +24,32 @@ jobs:
     uses: azerothcore/reusable-workflows/.github/workflows/core_build_modules.yml@main
     with:
       module_repo: ${{ github.event.repository.name }}
+
+  report:
+    needs: build
+    if: always() && github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      TITLE: Weekly build against AzerothCore master is failing
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      RESULT: ${{ needs.build.result }}
+    steps:
+      - name: Open, update or close the tracking issue
+        run: |
+          existing="$(gh issue list --state open --search "in:title \"$TITLE\"" \
+            --json number,title --jq ".[] | select(.title == env.TITLE) | .number" | head -1)"
+          if [[ "$RESULT" == success ]]; then
+            if [[ -n "$existing" ]]; then
+              gh issue close "$existing" --comment "Fixed: the weekly build passed again in $RUN_URL"
+            fi
+          elif [[ -n "$existing" ]]; then
+            gh issue comment "$existing" --body "Still failing ($RESULT): $RUN_URL"
+          else
+            gh issue create --title "$TITLE" --body "$(printf '%s\n\n%s\n' \
+              "The scheduled build of this module against the latest AzerothCore master finished with \`$RESULT\`." \
+              "Run: $RUN_URL")"
+          fi
